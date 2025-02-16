@@ -42,7 +42,8 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
         // Hepsiburada'dan ürün sayfasına git
         //String url = "https://www.hepsiburada.com/nimmy-cep-telefonu-aksesuarlari-xc-371967-b59909";
         //String url = "https://www.hepsiburada.com/ara?q=powerway+powerbank";
-        String url = "https://www.hepsiburada.com/ara?q=xo+konsol+telefon+tutucu";
+        //String url = "https://www.hepsiburada.com/ara?q=xo+konsol+telefon+tutucu";
+        String url = "https://www.hepsiburada.com/ara?q=everton%20nostaljik%20radyo";
         driver.get(url);
         Thread.sleep(3000); // Sayfanın yüklenmesi için bekle
 
@@ -181,7 +182,8 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                 Select cselect = new Select(categorydropdown);
                 //cselect.selectByVisibleText("Kapak & Kılıf");
                 //cselect.selectByVisibleText("POWERBANK");  // "Kapak & Kılıf" seçilir
-                cselect.selectByVisibleText("ARAÇ TELEFON TUTACAĞI");
+                //cselect.selectByVisibleText("ARAÇ TELEFON TUTACAĞI");
+                cselect.selectByVisibleText("NOSTALJİ RADYO");
                 ReusableMethods.bekle(2);
                 System.out.println("kategori seçildi");
 
