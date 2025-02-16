@@ -40,7 +40,9 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
         System.out.println(mevcutUrunler);
 
         // Hepsiburada'dan ürün sayfasına git
-        String url = "https://www.hepsiburada.com/nimmy-cep-telefonu-aksesuarlari-xc-371967-b59909";
+        //String url = "https://www.hepsiburada.com/nimmy-cep-telefonu-aksesuarlari-xc-371967-b59909";
+        //String url = "https://www.hepsiburada.com/ara?q=powerway+powerbank";
+        String url = "https://www.hepsiburada.com/ara?q=xo+konsol+telefon+tutucu";
         driver.get(url);
         Thread.sleep(3000); // Sayfanın yüklenmesi için bekle
 
@@ -147,16 +149,28 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                 ReusableMethods.bekle(2);
                 System.out.println(fiyat);
 
-//                WebElement descriptionElement = driver.findElement(By.cssSelector(".sf-ProductDescription-ELfL1tuePGs5IVj8XHGy p"));
-//                String description = descriptionElement.getText();
-//                System.out.println(description);
+                WebElement descriptionElement = driver.findElement(By.xpath("//*[@id=\"Description\"]/div[1]/div[1]"));
+                String description = descriptionElement.getText();
+                System.out.println(description);
+                System.out.println("AÇIKLAMA ALINDI");
 
+                // Markayı da alalım
+                String brand = driver.findElement(By.xpath("//h1[@data-test-id='title']/a")).getText();
                 ReusableMethods.bekle(2);
+                System.out.println(brand +": marka alındı");
+
                 driver.switchTo().window(yukselWindowHandle);
                 System.out.println("yeni sayfa");
                 ReusableMethods.bekle(1);
 
-                driver.findElement(By.xpath("/html/body/div/main/div/div[1]/a")).click();
+                try {
+                    WebElement button1 = driver.findElement(By.xpath("/html/body/div/main/div/div[1]/a"));
+                    button1.click();
+                } catch (NoSuchElementException e) {
+                    WebElement button2 = driver.findElement(By.xpath("/html/body/div/main/div/div[2]/a"));
+                    button2.click();
+                }
+
                 ReusableMethods.bekle(1);
 
                 WebElement urunadi = driver.findElement(By.xpath("//*[@id=\"name\"]"));
@@ -165,22 +179,24 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
 
                 WebElement categorydropdown = driver.findElement(By.id("category"));
                 Select cselect = new Select(categorydropdown);
-                cselect.selectByVisibleText("KAPAK & KILIF");  // "Kapak & Kılıf" seçilir
+                //cselect.selectByVisibleText("Kapak & Kılıf");
+                //cselect.selectByVisibleText("POWERBANK");  // "Kapak & Kılıf" seçilir
+                cselect.selectByVisibleText("ARAÇ TELEFON TUTACAĞI");
                 ReusableMethods.bekle(2);
                 System.out.println("kategori seçildi");
 
-                String brand = driver.findElement(By.xpath("//h1[@data-test-id='title']/a")).getText();
+
                 System.out.println("Marka: " + brand);  // Marka adını ekrana yazdır
                 WebElement branddropdown = driver.findElement(By.id("brand"));
                 Select bselect = new Select(branddropdown);
-                bselect.selectByVisibleText("Nimmy");
+                bselect.selectByVisibleText(brand);
                 System.out.println("marka seçildi");
                 ReusableMethods.bekle(2);
 
 
-//                WebElement descriptionbar = driver.findElement(By.xpath("//*[@id=\"description\"]"));
-//                descriptionbar.sendKeys(description);
-//                ReusableMethods.bekle(2);
+                WebElement descriptionbar = driver.findElement(By.xpath("//*[@id=\"description\"]"));
+                descriptionbar.sendKeys(description);
+                ReusableMethods.bekle(2);
 
                 driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[1]/button[3]")).click();
                 ReusableMethods.bekle(1);
@@ -189,12 +205,12 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                 pricebar.sendKeys(fiyat);
                 ReusableMethods.bekle(2);
 
-                driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[1]/button[4]"));
+                driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[1]/button[4]")).click();
                 WebElement stockbar = driver.findElement(By.xpath("//*[@id=\"stock\"]"));
                 stockbar.sendKeys("1");
                 ReusableMethods.bekle(2);
 
-                driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[1]/button[2]"));
+                driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[1]/button[2]")).click();
                 ReusableMethods.bekle(1);
                 driver.switchTo().window(currentWindowHandle);
                 ReusableMethods.bekle(1);
@@ -226,11 +242,21 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                     driver.findElement(By.xpath("//*[@id=\"pdp-carouselContainer\"]/div[1]/div[2]")).click();
                     ReusableMethods.bekle(1);
                     driver.switchTo().window(yukselWindowHandle);
+                    ReusableMethods.bekle(2);
+                    System.out.println("görseli, yuksel iletisime yükleme islemi başlıyor");
                     // buraya görseli eklicez
-                    WebElement fileInput = driver.findElement(By.name("images"));
-
+                    WebElement fileInput = driver.findElement(By.xpath("//*[@id=\"images\"]/div/input"));
                     // Dosya yolunu gönder (çoklu dosya yükleme desteği var)
-                    fileInput.sendKeys(savePath);
+                    File file = new File(savePath);
+                    if (file.exists()) {
+                        System.out.println("Dosya bulundu: " + savePath);
+                    } else {
+                        System.out.println("Dosya bulunamadı: " + savePath);
+                    }
+                    String absolutePath = file.getAbsolutePath();
+                    System.out.println(absolutePath);
+                    fileInput.sendKeys(absolutePath);
+                    System.out.println("görseli, yuksel iletisime yükleme islemi başarılı");
                     driver.switchTo().window(currentWindowHandle);
                     ReusableMethods.bekle(1);
                 }
@@ -252,6 +278,7 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                 driver.switchTo().window(yukselWindowHandle);
                 ReusableMethods.bekle(1);
                 driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[3]/button")).click();
+                ReusableMethods.bekle(1);
                 driver.switchTo().window(currentWindowHandle);
                 ReusableMethods.bekle(1);
 
@@ -268,7 +295,7 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
 
             // Eski pencereye geri dön
             driver.switchTo().window(mainWindowHandle);
-            Thread.sleep(2000); // Ana sayfaya dönerken bekleme ekleyelim
+            ReusableMethods.bekle(2); // Ana sayfaya dönerken bekleme ekleyelim
         }
 
         // Dosyayı kaydet
