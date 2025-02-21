@@ -141,13 +141,25 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                     fiyat = indirimliFiyatElementi.getText();
                 } else {
                     // İndirimli fiyat yoksa, indirimsiz fiyatı al
-                    WebElement standartFiyatElementi = driver.findElement(By.cssSelector("div.z7kokklsVwh0K5zFWjIO span"));
-                    fiyat = standartFiyatElementi.getText();
+                    WebElement standartFiyatElementi = null;
+                    try {
+                        standartFiyatElementi = driver.findElement(By.cssSelector("div.z7kokklsVwh0K5zFWjIO span"));
+                    } catch (NoSuchElementException e) {
+                        // Eğer indirimli fiyat yoksa hata alınacaktır, bu durumda indirimsiz fiyatı alacağız
+                    }
+                    if(standartFiyatElementi != null){
+                        fiyat = standartFiyatElementi.getText();
+                    }else{
+                        WebElement sepetteFiyatElementi = driver.findElement(By.xpath("//*[@id=\"container\"]/div/main/div/div/div[2]/section[1]/div[2]/div[3]/div[2]/div/span"));
+                        fiyat = sepetteFiyatElementi.getText();
+                    }
+
                 }
                 // Fiyatı temizle: virgülden sonrası, TL ve nokta kaldır
                 fiyat = fiyat.split(",")[0];  // Virgülden sonrasını almaz
                 fiyat = fiyat.replace("TL", "").replace(".", "");  // TL'yi ve noktayı kaldır
                 System.out.println(fiyat);
+
 
                 WebElement descriptionElement = driver.findElement(By.xpath("//*[@id=\"Description\"]/div[1]/div[1]"));
                 String description = descriptionElement.getText();
@@ -255,11 +267,11 @@ public class C03_HepsiburadadanYukseliletisimeÜrünEkleme extends TestBase_Each
                 newRow.createCell(0).setCellValue(baslik);
                 newRow.createCell(1).setCellValue(fiyat);
                 // Başlıkları ekledikten sonra listeye kaydet
-
+                System.out.println("görseli, yuksel iletisime yükleme islemi başarılı");
                 mevcutUrunler.add(baslik);
                 FileOutputStream fileOutputStream = new FileOutputStream(excelDosyaYolu);
                 workbook.write(fileOutputStream);
-
+                System.out.println("görseli, yuksel iletisime yükleme islemi başarılı2");
                 driver.switchTo().window(yukselWindowHandle);
                 driver.findElement(By.xpath("//*[@id=\"productForm\"]/div[3]/button")).click();
                 driver.switchTo().window(currentWindowHandle);
